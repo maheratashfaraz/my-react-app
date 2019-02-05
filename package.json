@@ -3,8 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "heroku": "^7.19.4",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
+    "react-router": "^4.3.1",
     "react-scripts": "2.1.3"
   },
   "scripts": {
