@@ -5,8 +5,14 @@ jobs:
       - image: circleci/node:8
     steps:
       - checkout
+      - setup_remote_docker
       - restore_cache: # special step to restore the dependency cache
           key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: "Start Service and Check That it’s Running"
+          command: |
+            docker run -d --name my-app my-app
+            docker exec my-app curl --retry 10 --retry-connrefused http://localhost:8080
       - run:
           name: Setup Dependencies
           command: npm install
