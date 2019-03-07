@@ -14,18 +14,18 @@ jobs:
      - run:
          name: Build image
          command: |
-           docker build -t $FULL_IMAGE_NAME .
+           docker build -t my-react-app .
      - run:
          name: Test image
          command: |
-           docker run -d -p 8080:8080 --name built-image $FULL_IMAGE_NAME
+           docker run -d -p 8080:8080 --name built-image my-react-app
            sleep 10
            docker run --network container:built-image appropriate/curl --retry 10 --retry-connrefused http://localhost:8080 | grep "Hello World!"
      - run:
          name: Save image to an archive
          command: |
            mkdir docker-image
-           docker save -o docker-image/image.tar $FULL_IMAGE_NAME
+           docker save -o docker-image/image.tar my-react-app
      - persist_to_workspace:
          root: .
          paths:
