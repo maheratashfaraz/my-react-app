@@ -4,7 +4,7 @@ export class PageTemplate extends Component {
   render() {
     return (
       <div>
-        <h1>Hello AND</h1>
+        <h1>Hello Jaherul</h1>
       </div>
     );
   }
