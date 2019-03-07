@@ -37,6 +37,8 @@ jobs:
           command: |
             docker build -t my-react-app .
             docker run -d --name my-react-app my-react-app
+  deploy:
+              
 
 worflows:
   version: 2
@@ -48,4 +50,5 @@ worflows:
           requires:
             - build 
             - test
+      - deploy      
 
