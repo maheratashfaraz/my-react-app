@@ -29,7 +29,7 @@ jobs:
           command: |
             mkdir docker-image
             docker save -o docker-image/image.tar my-react-app
-     -  persist_to_workspace:
+      - persist_to_workspace:
           root: .
           paths:
             - docker-image
