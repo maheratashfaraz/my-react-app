@@ -76,7 +76,7 @@ jobs:
           key: v1-{{ checksum "requirements.txt" }}
           paths:
             - "venv"
-		  - run:
+      - run:
 					name: Load image
 					command: |
             docker load --input workspace/docker-image/image.tar
