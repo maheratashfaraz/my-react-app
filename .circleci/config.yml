@@ -79,29 +79,25 @@ jobs:
            chmod a+x deploy-ecs-dev.sh
            ./deploy-ecs-dev.sh
 workflows:
- version: 2
- build_deploy:
-   jobs:
-     - prepare:
-         filters:
-           tags:
-             only: /.*/
-     - build:
-         requires:
-           - prepare
-         filters:
-           tags:
-             only: /.*/
-     - unit-tests:
-         requires:
-           - build
-         filters:
-           tags:
-             only: /.*/
-     - deploy:
-         filters:
-           branches:
-           # change the below to the branch you want to deploy
-             only: test
-           tags:
-             only: /.*/
+  version: 2
+  build_deploy:
+    jobs:
+      - prepare:
+          filters:
+            tags:
+              only: /.*/
+      - build:
+          requires:
+            - prepare
+          filters:
+            tags:
+              only: /.*/
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+            # change the below to the branch you want to deploy
+              only: test
+            tags:
+              only: /.*/
