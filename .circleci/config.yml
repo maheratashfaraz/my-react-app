@@ -54,7 +54,7 @@ jobs:
          paths:
            - docker-image
  deploy:
-   <<: *default
+   <<: *defaults
    environment:
      AWS_DEFAULT_OUTPUT: json
    steps:
