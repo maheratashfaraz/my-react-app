@@ -1,38 +1,73 @@
+defaults: &defaults #working_directory: ./circleci
+ docker:
+   - image: circleci/node:8.12.0
+
 version: 2
 jobs:
+ prepare:
+   <<: *defaults
+   steps:
+     - checkout
+     # Download and cache dependencies
+     - restore_cache:
+         keys:
+           - v1-dependencies-{{ checksum "package.json" }}
+     - run:
+         name: install dependancies
+         command: yarn
+     - save_cache:
+         paths:
+           - node_modules
+           - .cache/Cypress
+         key: v1-dependencies-{{ checksum "package.json" }}
+     - persist_to_workspace:
+         root: .
+         paths:
+           - node_modules
+
  build:
-   docker:
-     - image: circleci/node:8
+   <<: *defaults
    steps:
      - checkout
      - setup_remote_docker
+     - attach_workspace:
+         at: .
      - run:
          name: Setup common environment variables
          command: |
            echo 'export ECR_REPOSITORY_NAME="${AWS_RESOURCE_NAME_PREFIX}"' >> $BASH_ENV
            echo 'export FULL_IMAGE_NAME="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${ECR_REPOSITORY_NAME}:${CIRCLE_SHA1}"' >> $BASH_ENV
+     # I don't know why you have the update npm below?
+     - run:
+         name: Update npm
+         command: 'sudo npm install -g npm@latest'
      - run:
          name: Build image
-         command: |
-           docker build -t my-react-app .
-     - run:
-         name: Test image
-         command: |
-           docker run -d -p 8080:8080 --name built-image my-react-app
-           sleep 10
+         command: docker build -t $AWS_ACCOUNT_ID.dkr.ecr.eu-west-1.amazonaws.com/my-react-app:$CIRCLE_BUILD_NUM .
      - run:
          name: Save image to an archive
          command: |
            mkdir docker-image
-           docker save -o docker-image/image.tar my-react-app
+           docker save -o docker-image/image.tar $AWS_ACCOUNT_ID.dkr.ecr.eu-west-1.amazonaws.com/my-react-app:$CIRCLE_BUILD_NUM
      - persist_to_workspace:
          root: .
          paths:
            - docker-image
-           
+ test:
+   <<: *defaults
+   steps:
+     - checkout
+     - attach_workspace
+         at: .
+     - run:
+         name: Run Test and Coverage
+         command: |
+           ./cc-test-reporter before-build
+           npm test -- --coverage
+           ./cc-test-reporter after-build --exit-code $?
+
  deploy:
-   docker:
-     - image: circleci/python:3.6.1
+   <<: *default
    environment:
      AWS_DEFAULT_OUTPUT: json
    steps:
@@ -40,58 +75,48 @@ jobs:
      - setup_remote_docker
      - attach_workspace:
          at: workspace
-     - restore_cache:
-         key: v1-{{ checksum "requirements.txt" }}
-     - run:
-         name: Install awscli
-         command: |
-           python3 -m venv venv
-           . venv/bin/activate
-           pip install -r requirements.txt
-     - save_cache:
-         key: v1-{{ checksum "requirements.txt" }}
-         paths:
-           - "venv"
      - run:
          name: Load image
          command: |
            docker load --input workspace/docker-image/image.tar
      - run:
-         name: Setup common environment variables
+         name: Install Dependencies
+         working_directory: /
          command: |
-           echo 'export ECR_REPOSITORY_NAME="${AWS_RESOURCE_NAME_PREFIX}"' >> $BASH_ENV
-           echo 'export ECS_CLUSTER_NAME="${AWS_RESOURCE_NAME_PREFIX}-cluster"' >> $BASH_ENV
-           echo 'export ECS_SERVICE_NAME="${AWS_RESOURCE_NAME_PREFIX}-service"' >> $BASH_ENV
+           sudo apt-get -y -qq update
+           sudo apt-get -y -qq install python3-pip
+           sudo pip3 install awscli --upgrade
      - run:
-         name: Push image
+         name: Deploy to Dev
          command: |
-           . venv/bin/activate
-           eval $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
-           docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPOSITORY_NAME:$CIRCLE_SHA1
-     - run:
-         name: Deploy
-         command: |
-           . venv/bin/activate
-           export ECS_TASK_FAMILY_NAME="${AWS_RESOURCE_NAME_PREFIX}-service"
-           export ECS_CONTAINER_DEFINITION_NAME="${AWS_RESOURCE_NAME_PREFIX}-service"
-           export EXECUTION_ROLE_ARN="arn:aws:iam::$AWS_ACCOUNT_ID:role/${AWS_RESOURCE_NAME_PREFIX}-ecs-execution-role"
-           ./deploy.sh
-     - run:
-         name: Test deployment (Please manually tear down AWS resources after use, if desired)
-         command: |
-           . venv/bin/activate
-           TARGET_GROUP_ARN=$(aws ecs describe-services --cluster $ECS_CLUSTER_NAME --services $ECS_SERVICE_NAME | jq -r '.services[0].loadBalancers[0].targetGroupArn')
-           ELB_ARN=$(aws elbv2 describe-target-groups --target-group-arns $TARGET_GROUP_ARN | jq -r '.TargetGroups[0].LoadBalancerArns[0]')
-           ELB_DNS_NAME=$(aws elbv2 describe-load-balancers --load-balancer-arns $ELB_ARN | jq -r '.LoadBalancers[0].DNSName')
-           curl http://$ELB_DNS_NAME | grep "Hello World!"
+           chmod a+x deploy-ecs-dev.sh
+           ./deploy-ecs-dev.sh
 workflows:
  version: 2
- build-deploy:
+ build_deploy:
    jobs:
-     - build
-     - deploy:
+     - prepare:
+         filters:
+           tags:
+             only: /.*/
+     - build:
+         requires:
+           - prepare
+         filters:
+           tags:
+             only: /.*/
+     - unit-tests:
          requires:
            - build
          filters:
+           tags:
+             only: /.*/
+     - deploy:
+         requires:
+           - unit-tests
+         filters:
            branches:
-             only: master
+           # change the below to the branch you want to deploy
+             only: test
+           tags:
+             only: /.*/
