@@ -76,8 +76,8 @@ jobs:
      - run:
          name: Deploy to Dev
          command: |
-           chmod a+x deploy-ecs-dev.sh
-           ./deploy-ecs-dev.sh
+           chmod a+x deploy.sh
+           ./deploy.sh
 workflows:
   version: 2
   build_deploy:
