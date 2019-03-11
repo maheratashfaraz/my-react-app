@@ -3,17 +3,17 @@
 # more bash-friendly output for jq
 JQ="jq --raw-output --exit-status"
 
-configure_aws_cli(){
-    aws --version
-    accesskey=${environment}accesskey
-    secretkey=${environment}secretkey
-    aws configure set aws_access_key_id ${!accesskey} --profile $environment
-    aws configure set aws_secret_access_key ${!secretkey} --profile $environment
-    aws configure set default.output json --profile $environment
-    aws configure set default.region us-east-1 --profile $environment
-    aws configure set default.region us-east-1
-    aws configure set default.output json
-}
+# configure_aws_cli(){
+#     aws --version
+#     accesskey=${environment}accesskey
+#     secretkey=${environment}secretkey
+#     aws configure set aws_access_key_id ${!accesskey} --profile $environment
+#     aws configure set aws_secret_access_key ${!secretkey} --profile $environment
+#     aws configure set default.output json --profile $environment
+#     aws configure set default.region us-east-1 --profile $environment
+#     aws configure set default.region us-east-1
+#     aws configure set default.output json
+# }
 
 deploy_cluster() {
     family="devops-test-cluster"
@@ -94,8 +94,8 @@ _exit_error() {
     exit 1
 }
 
-echo "Configuring CLI ..."
-configure_aws_cli || _exit_error
+# echo "Configuring CLI ..."
+# configure_aws_cli || _exit_error
 
 echo "Pushing image ..."
 push_ecr_image || _exit_error

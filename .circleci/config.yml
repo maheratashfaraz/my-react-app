@@ -73,11 +73,17 @@ jobs:
            sudo apt-get -y -qq update
            sudo apt-get -y -qq install python3-pip
            sudo pip3 install awscli --upgrade
+     - run:     
+         name: Install the AWS CLI
+         command: |
+           python3 -m venv venv
+           . venv/bin/activate
+           pip install -r requirements.txt 
      - run:
          name: Deploy to Dev
          command: |
            chmod a+x deploy.sh
-           ./deploy.sh
+           ./deploy.sh    
 workflows:
   version: 2
   build_deploy:
