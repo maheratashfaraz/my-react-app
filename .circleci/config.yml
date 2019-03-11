@@ -77,8 +77,8 @@ jobs:
           paths:
             - "venv"
       - run:
-					name: Load image
-					command: |
+          name: Load image
+          command: |
             docker load --input workspace/docker-image/image.tar
       - run:
 					name: Setup common environment variables
