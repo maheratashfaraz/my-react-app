@@ -4,7 +4,7 @@ jobs:
     docker:
       - image: circleci/node:8
     steps:
-      - checkout
+      - checkou
       - setup_remote_docker
       - run:
           name: Setup common environment variables
