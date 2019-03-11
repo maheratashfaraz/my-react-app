@@ -23,6 +23,16 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
           paths:
             - node_modules
+
+      - run:
+          name: Save image to an archive
+          command: |
+            mkdir docker-image
+            docker save -o docker-image/image.tar my-react-app
+      - persist_to_workspace:
+          root: .
+          paths:
+            - docker-image
   test:
     docker:
       - image: circleci/node:8
@@ -43,15 +53,7 @@ jobs:
           command: |
             docker build -t my-react-app .
             docker run -d --name my-react-app my-react-app 
-      - run:
-          name: Save image to an archive
-          command: |
-            mkdir docker-image
-            docker save -o docker-image/image.tar my-react-app
-      - persist_to_workspace:
-          root: .
-          paths:
-            - docker-image
+
   deploy:
     docker:
       - image: circleci/python:3.6.1
