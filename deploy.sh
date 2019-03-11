@@ -61,7 +61,7 @@ make_task_def(){
             ],
         }
     ]'
-    BUILD_NUMBER=$(($CIRCLE_PREVIOUS_BUILD_NUM-2))
+    BUILD_NUMBER=$(($CIRCLE_PREVIOUS_BUILD_NUM))
     task_def=$(printf "$task_template" ${AWS_ACCOUNT_ID} $BUILD_NUMBER)
 
 }
@@ -69,7 +69,7 @@ make_task_def(){
 push_ecr_image(){
     aws ecr get-login --region us-east-1
     eval $(aws ecr get-login --region us-east-1 --no-include-email | sed 's|https://||')
-    BUILD_NUMBER=$(($CIRCLE_PREVIOUS_BUILD_NUM-2))
+    BUILD_NUMBER=$(($CIRCLE_PREVIOUS_BUILD_NUM))
     docker push $AWS_ACCOUNT_ID.dkr.ecr.eu-west-1.amazonaws.com/my-react-app:$BUILD_NUMBER
 
 }
