@@ -5,8 +5,8 @@ JQ="jq --raw-output --exit-status"
 
 configure_aws_cli(){
     aws --version
-    accesskey=${environment}accesskey
-    secretkey=${environment}secretkey
+    accesskey=${AWS_ACCESS_KEY_ID}
+    secretkey=${AWS_SECRET_ACCESS_KEY}
     aws configure set aws_access_key_id ${!accesskey} --profile $environment
     aws configure set aws_secret_access_key ${!secretkey} --profile $environment
     aws configure set default.output json --profile $environment
