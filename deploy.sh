@@ -3,27 +3,27 @@
 # more bash-friendly output for jq
 JQ="jq --raw-output --exit-status"
 
-configure_aws_cli(){
-    aws --version
-    accesskey=${AWS_ACCESS_KEY_ID}
-    secretkey=${AWS_SECRET_ACCESS_KEY}
-    aws configure set aws_access_key_id ${!accesskey} --profile $environment
-    aws configure set aws_secret_access_key ${!secretkey} --profile $environment
-    aws configure set default.output json --profile $environment
-    aws configure set default.region us-east-1 --profile $environment
-    aws configure set default.region us-east-1
-    aws configure set default.output json
-}
-
 # configure_aws_cli(){
-#     accesskey=${environment}accesskey
-#     secretkey=${environment}secretkey
-#     aws configure set aws_access_key_id ${!accesskey}
-#     aws configure set aws_secret_access_key ${!secretkey}
 #     aws --version
+#     accesskey=${AWS_ACCESS_KEY_ID}
+#     secretkey=${AWS_SECRET_ACCESS_KEY}
+#     aws configure set aws_access_key_id ${!accesskey} --profile $environment
+#     aws configure set aws_secret_access_key ${!secretkey} --profile $environment
+#     aws configure set default.output json --profile $environment
+#     aws configure set default.region us-east-1 --profile $environment
 #     aws configure set default.region us-east-1
 #     aws configure set default.output json
 # }
+
+configure_aws_cli(){
+    accesskey=${AWS_ACCESS_KEY_ID}
+    secretkey=${AWS_SECRET_ACCESS_KEY}
+    aws configure set aws_access_key_id ${!accesskey}
+    aws configure set aws_secret_access_key ${!secretkey}
+    aws --version
+    aws configure set default.region us-east-1
+    aws configure set default.output json
+}
 
 deploy_cluster() {
     family="devops-test-cluster"
