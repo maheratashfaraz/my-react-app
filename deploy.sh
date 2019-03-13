@@ -3,17 +3,17 @@
 # more bash-friendly output for jq
 JQ="jq --raw-output --exit-status"
 
-# configure_aws_cli(){
-#     aws --version
-#     accesskey=${AWS_ACCESS_KEY_ID}
-#     secretkey=${AWS_SECRET_ACCESS_KEY}
-#     aws configure set aws_access_key_id ${!accesskey} --profile $environment
-#     aws configure set aws_secret_access_key ${!secretkey} --profile $environment
-#     aws configure set default.output json --profile $environment
-#     aws configure set default.region us-east-1 --profile $environment
-#     aws configure set default.region us-east-1
-#     aws configure set default.output json
-# }
+configure_aws_cli(){
+    aws --version
+    accesskey=${AWS_ACCESS_KEY_ID}
+    secretkey=${AWS_SECRET_ACCESS_KEY}
+    aws configure set aws_access_key_id ${!accesskey} --profile $environment
+    aws configure set aws_secret_access_key ${!secretkey} --profile $environment
+    aws configure set default.output json --profile $environment
+    aws configure set default.region us-east-1 --profile $environment
+    aws configure set default.region us-east-1
+    aws configure set default.output json
+}
 
 # configure_aws_cli(){
 #     accesskey=${AWS_ACCESS_KEY_ID}
@@ -77,8 +77,8 @@ make_task_def(){
 }
 
 push_ecr_image(){
-    aws ecr get-login --p --region us-east-1
-    eval $(aws ecr get-login --p --region us-east-1 --no-include-email | sed 's|https://||')
+    aws ecr get-login --region us-east-1
+    eval $(aws ecr get-login --region us-east-1 --no-include-email | sed 's|https://||')
     BUILD_NUMBER=$(($CIRCLE_PREVIOUS_BUILD_NUM))
     docker push $AWS_ACCOUNT_ID.dkr.ecr.eu-west-1.amazonaws.com/my-react-app:$BUILD_NUMBER
 }
