@@ -41,8 +41,8 @@ deploy_cluster() {
 make_task_def(){
     task_template='[
         {
-            "name": "go-sample-webapp",
-            "image": "%s.dkr.ecr.us-east-1.amazonaws.com/go-sample-webapp:%s",
+            "name": "my-react-app,
+            "image": "%s.dkr.ecr.us-east-1.amazonaws.com/my-react-app:%s",
             "essential": true,
             "memory": 200,
             "cpu": 10,
