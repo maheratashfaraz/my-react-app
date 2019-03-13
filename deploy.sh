@@ -11,7 +11,7 @@ configure_aws_cli(){
 
 deploy_cluster() {
 
-    family="sample-webapp-task-family"
+    family="my-react-app"
 
     make_task_def
     register_definition
