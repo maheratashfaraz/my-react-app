@@ -103,8 +103,8 @@ _exit_error() {
     exit 1
 }
 
-# echo "Configuring CLI ..."
-# configure_aws_cli || _exit_error
+echo "Configuring CLI ..."
+configure_aws_cli || _exit_error
 
 echo "Pushing image ..."
 push_ecr_image || _exit_error
