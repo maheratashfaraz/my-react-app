@@ -61,6 +61,7 @@ make_task_def(){
 push_ecr_image(){
     eval $(aws ecr get-login --region us-east-1 --no-include-email)
     docker push $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/my-react-app:$CIRCLE_SHA1
+    echo "Image is pushed"
 }
 
 register_definition() {
