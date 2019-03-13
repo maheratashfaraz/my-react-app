@@ -41,7 +41,7 @@ deploy_cluster() {
 make_task_def(){
     task_template='[
         {
-            "name": "devops-test-web,
+            "name": "devops-test-web",
             "image": "%s.dkr.ecr.us-east-1.amazonaws.com/my-react-app:%s",
             "essential": true,
             "memory": 200,
