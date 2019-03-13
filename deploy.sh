@@ -41,7 +41,7 @@ deploy_cluster() {
 make_task_def(){
     task_template='[
         {
-            "name": "sample-app-service",
+            "name": "my-react-app",
             "image": "%s.dkr.ecr.us-east-2.amazonaws.com/my-react-app:%s",
             "essential": true,
             "memory": 200,
