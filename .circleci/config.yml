@@ -43,12 +43,12 @@ jobs:
          command: 'sudo npm install -g npm@latest'
      - run:
          name: Build image
-         command: docker build -t $AWS_ACCOUNT_ID.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/my-react-app:$CIRCLE_BUILD_NUM .
+         command: docker build -t $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/my-react-app:$CIRCLE_BUILD_NUM .
      - run:
          name: Save image to an archive
          command: |
            mkdir docker-image
-           docker save -o docker-image/image.tar $AWS_ACCOUNT_ID.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/my-react-app:$CIRCLE_BUILD_NUM
+           docker save -o docker-image/image.tar $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/my-react-app:$CIRCLE_BUILD_NUM
      - persist_to_workspace:
          root: .
          paths:
