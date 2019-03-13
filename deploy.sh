@@ -5,7 +5,7 @@ JQ="jq --raw-output --exit-status"
 
 configure_aws_cli(){
     aws --version
-    aws configure set default.region us-east-1
+    aws configure set default.region us-east-2
     aws configure set default.output json
 }
 
@@ -42,7 +42,7 @@ make_task_def(){
     task_template='[
         {
             "name": "devops-test-web",
-            "image": "%s.dkr.ecr.us-east-1.amazonaws.com/my-react-app:%s",
+            "image": "%s.dkr.ecr.us-east-2.amazonaws.com/my-react-app:%s",
             "essential": true,
             "memory": 200,
             "cpu": 10,
@@ -59,8 +59,8 @@ make_task_def(){
 }
 
 push_ecr_image(){
-    eval $(aws ecr get-login --region us-east-1 --no-include-email)
-    docker push $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/my-react-app:$CIRCLE_SHA1
+    eval $(aws ecr get-login --region us-east-2 --no-include-email)
+    docker push $AWS_ACCOUNT_ID.dkr.ecr.us-east-2.amazonaws.com/my-react-app:$CIRCLE_SHA1
     echo "Image is pushed"
 }
 
