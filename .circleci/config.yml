@@ -105,17 +105,6 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
           paths:
             - node_modules
-  test:
-    docker:
-      - image: circleci/node:8
-    steps:
-      - checkout
-      - run: # run tests
-          name: Run Test and Coverage
-          command: |
-            ./cc-test-reporter before-build
-            npm test -- --coverage
-            ./cc-test-reporter after-build --exit-code $?
   docker:
     docker:
       - image: circleci/node:8
@@ -130,8 +119,9 @@ worflows:
   build-deploy: 
     jobs:
       - build
-      - test
       - docker:
           requires:
-            - build 
-            - test
+            - build
+          filters:
+           branches:
+             only: master
