@@ -158,7 +158,6 @@ worflows:
             - build
       - deploy-staging:
           requires:
-            - build
             - docker
           filters:
             branches:
