@@ -110,10 +110,44 @@ jobs:
       - image: circleci/node:8
     steps:
       - run:
-          name: "Start Service and Check That it’s Running"
-          command: |
-            docker build -t my-react-app .
-            docker run -d --name my-react-app my-react-app              
+          name: building docker image
+          command: docker build --rm=false -t gcr.io/${PROJECT}/${DOCKER_IMAGE}:$CIRCLE_SHA1 .
+      - run:
+          name: Mkdir docker-cache
+          command: mkdir -p docker-cache
+      - run:
+          name: Save docker image to cache directory
+          command: docker save -o docker-cache/built-image.tar asia.gcr.io/${PROJECT}/${DOCKER_IMAGE}:$CIRCLE_SHA1
+      - persist_to_workspace:
+          root: .
+          paths:
+            - docker-cache
+      - save_cache:
+          key: node-modules-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+
+    deploy-staging:
+      working_directory: ~/my-react-app
+      docker:
+        - image: google/cloud-sdk
+      steps:
+        - checkout
+        - setup_remote_docker
+        - attach_workspace:
+            at: .
+        - run:
+            name: Load docker image from cache
+            command: docker load --input docker-cache/built-image.tar
+        - run:
+            name: Auth gCloud SDK
+            command: bash ./deploy/gcloud-auth.sh
+        - run: 
+            name: tag docker image with latest
+            command: docker tag gcr.io/${PROJECT}/${DOCKER_IMAGE}:$CIRCLE_SHA1 gcr.io/${PROJECT}/${DOCKER_IMAGE}:latest
+        - run:
+            name: Running staging.sh
+            command: bash ./deploy/staging.sh              
 worflows:
   version: 2
   build-deploy: 
