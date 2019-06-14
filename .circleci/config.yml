@@ -153,9 +153,5 @@ worflows:
   build-deploy: 
     jobs:
       - build
-      - docker:
-          requires:
-            - build
-      - deploy-staging:
-          requires:
-            - docker
+      - docker
+      - deploy-staging
