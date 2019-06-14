@@ -158,7 +158,7 @@ workflows:
             - build
       - deploy:
           requires:
-            - docker
+            - image-creation
           filters:
             branches:
               only: master
