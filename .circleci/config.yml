@@ -153,5 +153,12 @@ worflows:
   build-deploy: 
     jobs:
       - build
-      - docker
-      - deploy-staging
+      - docker:
+          requires:
+            - build
+      - deploy-staging:
+          requires:
+            - docker
+          filters:
+            branches:
+              only: master
