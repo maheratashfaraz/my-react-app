@@ -148,7 +148,7 @@ jobs:
       - run:
           name: Running staging.sh
           command: bash ./deploy/staging.sh              
-worflows:
+workflows:
   version: 2
   build-deploy: 
     jobs:
