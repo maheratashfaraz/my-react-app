@@ -117,7 +117,7 @@ jobs:
           command: mkdir -p docker-cache
       - run:
           name: Save docker image to cache directory
-          command: docker save -o docker-cache/built-image.tar asia.gcr.io/${PROJECT}/${DOCKER_IMAGE}:$CIRCLE_SHA1
+          command: docker save -o docker-cache/built-image.tar gcr.io/${PROJECT}/${DOCKER_IMAGE}:$CIRCLE_SHA1
       - persist_to_workspace:
           root: .
           paths:
