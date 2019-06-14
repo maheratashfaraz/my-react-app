@@ -105,7 +105,7 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
           paths:
             - node_modules
-  docker:
+  image-creation:
     docker:
       - image: circleci/node:8
     steps:
@@ -127,7 +127,7 @@ jobs:
           paths:
             - node_modules
 
-  deploy-staging:
+  deploy:
     working_directory: ~/my-react-app
     docker:
       - image: google/cloud-sdk
@@ -153,10 +153,10 @@ worflows:
   build-deploy: 
     jobs:
       - build
-      - docker:
+      - image-creation:
           requires:
             - build
-      - deploy-staging:
+      - deploy:
           requires:
             - docker
           filters:
