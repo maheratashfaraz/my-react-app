@@ -159,6 +159,3 @@ worflows:
       - deploy-staging:
           requires:
             - docker
-          filters:
-            branches:
-              only: master
